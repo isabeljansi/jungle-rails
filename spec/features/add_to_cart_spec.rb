@@ -1,12 +1,14 @@
 require 'rails_helper'
 
+RSpec.feature "Visitors can add the product in the homepage to the cart ", type: :feature, js: true do
 
-RSpec.feature 'AddToCarts', type: :feature do
+  # SETUP
   before :each do
     @category = Category.create! name: 'Apparel'
+
     10.times do |n|
       @category.products.create!(
-        name: Faker::Hipster.sentence(3),
+        name:  Faker::Hipster.sentence(3),
         description: Faker::Hipster.paragraph(4),
         image: open_asset('apparel1.jpg'),
         quantity: 10,
@@ -14,10 +16,11 @@ RSpec.feature 'AddToCarts', type: :feature do
       )
     end
   end
-  scenario 'increases cart count by one when product is added' do
+
+  scenario "The cart counter increased from 0 to 1" do
     visit root_path
-    footer_link = page.all('.product footer button')[0]
-    footer_link.click
-    within('nav') { expect(page).to have_content('My Cart (1)') }
+    expect(page).to have_content 'My Cart (0)'
+    page.first('article.product').click_on 'Add'
+    expect(page).to have_content 'My Cart (1)'
   end
 end
